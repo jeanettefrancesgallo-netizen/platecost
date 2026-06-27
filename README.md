@@ -72,6 +72,7 @@ See [PROGRESS.md](./PROGRESS.md) for the build checklist.
 | `npm run test` | Vitest unit/component tests |
 | `npm run test:watch` | Vitest in watch mode |
 | `npm run e2e` | Playwright end-to-end tests (run `npx playwright install` once first) |
+| `npm run test:integration` | RLS isolation tests against your real Supabase project (needs `SUPABASE_SERVICE_ROLE_KEY` in `.env.local`) |
 
 ## Database
 
@@ -87,6 +88,12 @@ Every tenant-scoped table has Row-Level Security enabled — a signed-in user ca
 rows belonging to organizations they are a member of. The super-admin console bypasses tenant RLS
 only via secure server-side Supabase Edge Functions using the service-role key; that key is never
 shipped to the browser.
+
+`npm run test:integration` verifies this against your real project by creating two throwaway
+organizations and asserting one cannot read, list, or write into the other's rows, then cleans
+both up. It needs `SUPABASE_SERVICE_ROLE_KEY` set (in `.env.local` or the shell) since it has to
+create/delete test users via the admin API — never commit that key, and never expose it to the
+browser/client code.
 
 ## Project structure
 

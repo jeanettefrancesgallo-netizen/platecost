@@ -11,16 +11,16 @@
 - [x] Playwright configured, smoke e2e spec added
 - [x] `.env.example`, `.gitignore`, README
 - [x] Clean baseline committed to git
-- [ ] Database schema + RLS policy design reviewed with user
-- [ ] Supabase project connected (awaiting project URL/anon key)
+- [x] Database schema + RLS policy design reviewed with user
+- [x] Supabase project connected, 12 migrations pushed and verified live
 
 ## Multi-tenancy & Auth
 
-- [ ] `organizations`, `organization_members`, `locations` tables + RLS
-- [ ] Signup → create organization → setup wizard → dashboard flow
-- [ ] Org switcher in header
-- [ ] Role enforcement (Owner / Manager / Staff) in UI and RLS
-- [ ] RLS isolation test (Org A cannot read Org B's rows)
+- [x] `organizations`, `organization_members`, `locations` tables + RLS
+- [x] Signup → create organization → setup wizard → dashboard flow (verified in a real browser)
+- [x] Org switcher in header
+- [ ] Role enforcement (Owner / Manager / Staff) in UI (RLS policies already enforce it server-side)
+- [x] RLS isolation test (Org A cannot read Org B's rows) — `npm run test:integration`, passing against the live project
 
 ## Super-Admin Console
 
