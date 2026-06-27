@@ -1,12 +1,60 @@
-import { Button } from '@/components/ui/button'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { Toaster } from '@/components/ui/sonner'
+import { queryClient } from '@/lib/queryClient'
+import { AuthProvider } from '@/features/auth/AuthProvider'
+import { CurrentOrgProvider } from '@/features/organizations/CurrentOrgProvider'
+import { ProtectedRoute } from '@/routes/ProtectedRoute'
+import { RequireOrg } from '@/routes/RequireOrg'
+import { AppShell } from '@/components/layout/AppShell'
+import { LoginPage } from '@/pages/LoginPage'
+import { SignupPage } from '@/pages/SignupPage'
+import { OnboardingPage } from '@/pages/OnboardingPage'
+import { DashboardPage } from '@/pages/DashboardPage'
+import { PlaceholderPage } from '@/pages/PlaceholderPage'
 
 function App() {
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center gap-4 bg-background text-foreground">
-      <h1 className="text-2xl font-semibold">PlateCost</h1>
-      <p className="text-muted-foreground">Scaffold ready.</p>
-      <Button>Get started</Button>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <BrowserRouter>
+          <CurrentOrgProvider>
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
+              <Route
+                path="/onboarding"
+                element={
+                  <ProtectedRoute>
+                    <OnboardingPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                element={
+                  <ProtectedRoute>
+                    <RequireOrg>
+                      <AppShell />
+                    </RequireOrg>
+                  </ProtectedRoute>
+                }
+              >
+                <Route path="/" element={<DashboardPage />} />
+                <Route path="/ingredients" element={<PlaceholderPage title="Ingredients" />} />
+                <Route path="/recipes" element={<PlaceholderPage title="Recipes" />} />
+                <Route path="/beverages" element={<PlaceholderPage title="Beverages" />} />
+                <Route path="/inventory" element={<PlaceholderPage title="Inventory" />} />
+                <Route path="/reports" element={<PlaceholderPage title="Reports" />} />
+                <Route path="/team" element={<PlaceholderPage title="Team" />} />
+                <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
+              </Route>
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </CurrentOrgProvider>
+        </BrowserRouter>
+      </AuthProvider>
+      <Toaster />
+    </QueryClientProvider>
   )
 }
 

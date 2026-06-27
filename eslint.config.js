@@ -6,7 +6,14 @@ import tseslint from 'typescript-eslint'
 import { globalIgnores } from 'eslint/config'
 
 export default tseslint.config([
-  globalIgnores(['dist', 'node_modules', 'coverage', 'playwright-report', 'src/components/ui']),
+  globalIgnores([
+    'dist',
+    'node_modules',
+    'coverage',
+    'playwright-report',
+    'src/components/ui',
+    'src/types/database.types.ts',
+  ]),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [js.configs.recommended, tseslint.configs.recommended],
