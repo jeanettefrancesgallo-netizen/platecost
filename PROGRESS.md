@@ -46,7 +46,11 @@
 
 ## Core Tenant Features
 
-- [ ] Ingredient Library + manageable categories (seeded café defaults, safe reassignment)
+- [x] Ingredient Library + manageable categories (seeded café defaults, safe reassignment to
+      Uncategorized, reorder, rename, delete) — auto unit conversion (kg/g, L/ml, oz/fl oz →
+      base unit) and live cost-per-base-unit preview while filling the form, normalized into the
+      org's base currency. Search + category filter. Verified live in a real browser, including a
+      fixed bug where the category/supplier dropdowns displayed raw UUIDs instead of names.
 - [ ] Recipe / Menu Item Builder with unit conversion + live costing
 - [ ] Beverage & Cocktail Pour Costing
 - [ ] Pricing & Margin Calculator with target-based color coding

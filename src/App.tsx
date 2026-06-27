@@ -13,6 +13,7 @@ import { LoginPage } from '@/pages/LoginPage'
 import { SignupPage } from '@/pages/SignupPage'
 import { OnboardingPage } from '@/pages/OnboardingPage'
 import { DashboardPage } from '@/pages/DashboardPage'
+import { IngredientsPage } from '@/pages/IngredientsPage'
 import { TeamPage } from '@/pages/TeamPage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { PlaceholderPage } from '@/pages/PlaceholderPage'
@@ -50,7 +51,7 @@ function App() {
                 }
               >
                 <Route path="/" element={<DashboardPage />} />
-                <Route path="/ingredients" element={<PlaceholderPage title="Ingredients" />} />
+                <Route path="/ingredients" element={<IngredientsPage />} />
                 <Route path="/recipes" element={<PlaceholderPage title="Recipes" />} />
                 <Route path="/beverages" element={<PlaceholderPage title="Beverages" />} />
                 <Route path="/inventory" element={<PlaceholderPage title="Inventory" />} />
