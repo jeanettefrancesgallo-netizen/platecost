@@ -19,7 +19,9 @@
 - [x] `organizations`, `organization_members`, `locations` tables + RLS
 - [x] Signup → create organization → setup wizard → dashboard flow (verified in a real browser)
 - [x] Org switcher in header
-- [ ] Role enforcement (Owner / Manager / Staff) in UI (RLS policies already enforce it server-side)
+- [x] Role enforcement (Owner / Manager / Staff): Team page (invite/role-change/remove, owner-only,
+      last-owner protected), Settings page (org name/currency, owner-only) — enforced in both RLS
+      and UI, verified in a real browser with two actual logged-in roles
 - [x] RLS isolation test (Org A cannot read Org B's rows) — `npm run test:integration`, passing against the live project
 
 ## Super-Admin Console

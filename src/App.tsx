@@ -11,6 +11,8 @@ import { LoginPage } from '@/pages/LoginPage'
 import { SignupPage } from '@/pages/SignupPage'
 import { OnboardingPage } from '@/pages/OnboardingPage'
 import { DashboardPage } from '@/pages/DashboardPage'
+import { TeamPage } from '@/pages/TeamPage'
+import { SettingsPage } from '@/pages/SettingsPage'
 import { PlaceholderPage } from '@/pages/PlaceholderPage'
 
 function App() {
@@ -45,8 +47,8 @@ function App() {
                 <Route path="/beverages" element={<PlaceholderPage title="Beverages" />} />
                 <Route path="/inventory" element={<PlaceholderPage title="Inventory" />} />
                 <Route path="/reports" element={<PlaceholderPage title="Reports" />} />
-                <Route path="/team" element={<PlaceholderPage title="Team" />} />
-                <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
+                <Route path="/team" element={<TeamPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
               </Route>
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
