@@ -26,12 +26,23 @@
 
 ## Super-Admin Console
 
-- [ ] `is_super_admin` flag + guarded `/admin` shell (distinct theme)
-- [ ] Platform dashboard (orgs, users, signups, MRR, plan distribution)
-- [ ] Tenant list, drill-down, suspend/reactivate/change plan/extend trial/delete
-- [ ] Read-only impersonation with audit logging
-- [ ] Announcements, feature flags
-- [ ] Searchable admin audit log
+- [x] `is_super_admin` flag + guarded `/admin` shell (distinct dark theme, "Platform Admin" badge) —
+      verified a non-admin is bounced to `/` and a flagged admin reaches the console
+- [x] Platform dashboard (orgs, users, signups chart, MRR, plan distribution chart)
+- [x] Tenant list (search/filter by status & plan), drill-down, suspend/reactivate/change
+      plan/extend trial/delete (with confirmation) — verified live against the database
+- [x] Audit logging for every mutating admin action + organization views (not full session
+      impersonation — see note below)
+- [x] Announcements, feature flags (CRUD)
+- [x] Searchable admin audit log
+
+  Architecture note: admin mutations and audit logging run through Postgres `SECURITY DEFINER`
+  RPC functions (gated on `is_super_admin()`) rather than Supabase Edge Functions, since this
+  environment has no Docker to build/test Edge Functions locally. Functionally equivalent —
+  server-side only, service-role key never touches the browser — documented in the migration.
+  "Read-only impersonate" is implemented as audit-logged drill-down visibility into tenant data,
+  not full session impersonation (no Edge Function available to mint another user's session
+  token); flag if true impersonation is required later.
 
 ## Core Tenant Features
 

@@ -932,6 +932,27 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_change_organization_plan: {
+        Args: { p_org_id: string; p_plan: string }
+        Returns: undefined
+      }
+      admin_delete_organization: {
+        Args: { p_org_id: string }
+        Returns: undefined
+      }
+      admin_extend_trial: {
+        Args: { p_days: number; p_org_id: string }
+        Returns: undefined
+      }
+      admin_get_platform_stats: { Args: never; Returns: Json }
+      admin_log_organization_view: {
+        Args: { p_org_id: string }
+        Returns: undefined
+      }
+      admin_set_organization_status: {
+        Args: { p_org_id: string; p_status: string }
+        Returns: undefined
+      }
       create_organization_with_owner: {
         Args: { p_base_currency?: string; p_name: string; p_slug: string }
         Returns: {
