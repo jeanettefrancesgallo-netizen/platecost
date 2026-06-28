@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase'
 
 export interface RecipeFilters {
   search: string
+  type: 'food' | 'beverage'
 }
 
 export function useRecipes(organizationId: string | undefined, filters: RecipeFilters) {
@@ -16,6 +17,7 @@ export function useRecipes(organizationId: string | undefined, filters: RecipeFi
           '*, recipe_items(quantity, unit, ingredients(base_unit, cost_per_base_unit, exchange_rate_to_base))',
         )
         .eq('organization_id', organizationId!)
+        .eq('type', filters.type)
         .order('name')
 
       if (filters.search.trim()) {

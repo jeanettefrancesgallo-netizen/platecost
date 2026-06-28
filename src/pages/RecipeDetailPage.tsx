@@ -17,7 +17,7 @@ import {
 import { summarizeRecipe } from '@/features/recipes/recipeSummary'
 import { CostHealthBadge } from '@/features/recipes/CostHealthBadge'
 import { useIngredients } from '@/features/ingredients/useIngredients'
-import { recipeItemCost } from '@/lib/recipeCosting'
+import { pourCosting, recipeItemCost } from '@/lib/recipeCosting'
 import { PURCHASE_UNITS_BY_BASE, type BaseUnit } from '@/lib/units'
 import { formatCurrency } from '@/lib/currency'
 import { Button } from '@/components/ui/button'
@@ -49,6 +49,9 @@ const detailsSchema = z.object({
   sellingPrice: z.number().min(0),
   laborCost: z.number().min(0),
   packagingCost: z.number().min(0),
+  bottleSizeMl: z.number().positive().optional(),
+  bottleCost: z.number().min(0).optional(),
+  pourSizeMl: z.number().positive().optional(),
 })
 
 type DetailsForm = z.infer<typeof detailsSchema>
@@ -89,6 +92,9 @@ export function RecipeDetailPage() {
         sellingPrice: recipe.selling_price,
         laborCost: recipe.labor_cost,
         packagingCost: recipe.packaging_cost,
+        bottleSizeMl: recipe.bottle_size_ml ?? undefined,
+        bottleCost: recipe.bottle_cost ?? undefined,
+        pourSizeMl: recipe.pour_size_ml ?? undefined,
       })
     }
   }, [recipe, reset])
@@ -110,12 +116,28 @@ export function RecipeDetailPage() {
         selling_price: values.sellingPrice,
         labor_cost: values.laborCost,
         packaging_cost: values.packagingCost,
+        ...(recipe.type === 'beverage'
+          ? {
+              bottle_size_ml: values.bottleSizeMl ?? null,
+              bottle_cost: values.bottleCost ?? null,
+              pour_size_ml: values.pourSizeMl ?? null,
+            }
+          : {}),
       })
       toast.success('Recipe saved')
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Could not save recipe')
     }
   }
+
+  const pour =
+    recipe.bottle_size_ml && recipe.bottle_cost !== null && recipe.pour_size_ml
+      ? pourCosting({
+          bottleSizeMl: recipe.bottle_size_ml,
+          bottleCost: recipe.bottle_cost,
+          pourSizeMl: recipe.pour_size_ml,
+        })
+      : null
 
   const selectedIngredient = ingredients.find((i) => i.id === newIngredientId)
   const availableUnits = selectedIngredient
@@ -207,7 +229,67 @@ export function RecipeDetailPage() {
             </Button>
           )}
         </div>
+
+        {recipe.type === 'beverage' && (
+          <div className="flex flex-wrap items-end gap-3 border-t border-border pt-3">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="bottle-size">Bottle size (ml)</Label>
+              <Input
+                id="bottle-size"
+                type="number"
+                step="any"
+                disabled={!canManage}
+                className="w-32"
+                {...register('bottleSizeMl', { valueAsNumber: true })}
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="bottle-cost">Bottle cost</Label>
+              <Input
+                id="bottle-cost"
+                type="number"
+                step="any"
+                disabled={!canManage}
+                className="w-32"
+                {...register('bottleCost', { valueAsNumber: true })}
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="pour-size">Pour size (ml)</Label>
+              <Input
+                id="pour-size"
+                type="number"
+                step="any"
+                disabled={!canManage}
+                className="w-32"
+                {...register('pourSizeMl', { valueAsNumber: true })}
+              />
+            </div>
+            {canManage && (
+              <Button type="submit" variant="outline" disabled={updateRecipe.isPending}>
+                Save pour details
+              </Button>
+            )}
+          </div>
+        )}
       </form>
+
+      {recipe.type === 'beverage' && pour && (
+        <Card className={pour.overPourRisk ? 'border-amber-500/50' : undefined}>
+          <CardHeader>
+            <CardTitle className="text-base">Pour costing</CardTitle>
+            <CardDescription>
+              {pour.poursPerBottle.toFixed(1)} pours per bottle ·{' '}
+              {formatCurrency(pour.costPerPour, baseCurrency)} per pour
+              {pour.overPourRisk && (
+                <span className="ml-2 font-medium text-amber-600 dark:text-amber-400">
+                  ⚠ Over-pour risk — fewer than 15 pours per bottle at this pour size
+                </span>
+              )}
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>

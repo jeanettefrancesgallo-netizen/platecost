@@ -16,6 +16,7 @@ import { DashboardPage } from '@/pages/DashboardPage'
 import { IngredientsPage } from '@/pages/IngredientsPage'
 import { RecipesPage } from '@/pages/RecipesPage'
 import { RecipeDetailPage } from '@/pages/RecipeDetailPage'
+import { BeveragesPage } from '@/pages/BeveragesPage'
 import { TeamPage } from '@/pages/TeamPage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { PlaceholderPage } from '@/pages/PlaceholderPage'
@@ -56,7 +57,7 @@ function App() {
                 <Route path="/ingredients" element={<IngredientsPage />} />
                 <Route path="/recipes" element={<RecipesPage />} />
                 <Route path="/recipes/:id" element={<RecipeDetailPage />} />
-                <Route path="/beverages" element={<PlaceholderPage title="Beverages" />} />
+                <Route path="/beverages" element={<BeveragesPage />} />
                 <Route path="/inventory" element={<PlaceholderPage title="Inventory" />} />
                 <Route path="/reports" element={<PlaceholderPage title="Reports" />} />
                 <Route path="/team" element={<TeamPage />} />

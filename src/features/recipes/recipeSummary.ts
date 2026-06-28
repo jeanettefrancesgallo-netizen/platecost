@@ -1,4 +1,4 @@
-import { recipeItemCost, recipeTotals, type RecipeTotals } from '@/lib/recipeCosting'
+import { pourCosting, recipeItemCost, recipeTotals, type RecipeTotals } from '@/lib/recipeCosting'
 import type { BaseUnit } from '@/lib/units'
 
 interface RecipeItemLike {
@@ -17,9 +17,17 @@ interface RecipeLike {
   packaging_cost: number
   portions: number
   selling_price: number
+  bottle_size_ml: number | null
+  bottle_cost: number | null
+  pour_size_ml: number | null
 }
 
-/** Computes recipe totals from a recipe row joined with its items + ingredients. */
+/**
+ * Computes recipe totals from a recipe row joined with its items +
+ * ingredients. For a beverage recipe with bottle/pour fields set, the pour
+ * cost of the primary spirit is folded in alongside any mixer/garnish
+ * recipe_items, so a full cocktail prices correctly.
+ */
 export function summarizeRecipe(recipe: RecipeLike): RecipeTotals {
   const itemCosts = recipe.recipe_items
     .filter((item) => item.ingredients !== null)
@@ -32,6 +40,16 @@ export function summarizeRecipe(recipe: RecipeLike): RecipeTotals {
         ingredientExchangeRateToBase: item.ingredients!.exchange_rate_to_base,
       }),
     )
+
+  if (recipe.bottle_size_ml && recipe.bottle_cost !== null && recipe.pour_size_ml) {
+    itemCosts.push(
+      pourCosting({
+        bottleSizeMl: recipe.bottle_size_ml,
+        bottleCost: recipe.bottle_cost,
+        pourSizeMl: recipe.pour_size_ml,
+      }).costPerPour,
+    )
+  }
 
   return recipeTotals({
     itemCosts,

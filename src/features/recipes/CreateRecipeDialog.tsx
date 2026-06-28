@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
 import { useCreateRecipe } from './useRecipeMutations'
+import type { RecipeFilters } from './useRecipes'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -25,7 +26,13 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>
 
-export function CreateRecipeDialog({ organizationId }: { organizationId: string }) {
+export function CreateRecipeDialog({
+  organizationId,
+  type,
+}: {
+  organizationId: string
+  type: RecipeFilters['type']
+}) {
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
   const createRecipe = useCreateRecipe(organizationId)
@@ -38,8 +45,12 @@ export function CreateRecipeDialog({ organizationId }: { organizationId: string 
 
   const onSubmit = async (values: FormValues) => {
     try {
-      const recipe = await createRecipe.mutateAsync({ name: values.name, portions: values.portions })
-      toast.success('Recipe created')
+      const recipe = await createRecipe.mutateAsync({
+        name: values.name,
+        portions: values.portions,
+        type,
+      })
+      toast.success(type === 'beverage' ? 'Beverage created' : 'Recipe created')
       reset()
       setOpen(false)
       navigate(`/recipes/${recipe.id}`)
@@ -50,10 +61,10 @@ export function CreateRecipeDialog({ organizationId }: { organizationId: string 
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button />}>New recipe</DialogTrigger>
+      <DialogTrigger render={<Button />}>{type === 'beverage' ? 'New beverage' : 'New recipe'}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>New recipe</DialogTitle>
+          <DialogTitle>{type === 'beverage' ? 'New beverage' : 'New recipe'}</DialogTitle>
           <DialogDescription>
             Add ingredients and pricing details after creating it.
           </DialogDescription>

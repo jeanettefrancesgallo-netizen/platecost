@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { classifyCostPercent, recipeItemCost, recipeTotals } from './recipeCosting'
+import { classifyCostPercent, pourCosting, recipeItemCost, recipeTotals } from './recipeCosting'
 
 describe('recipeItemCost', () => {
   it('converts the line quantity into the ingredient base unit before costing', () => {
@@ -89,5 +89,27 @@ describe('classifyCostPercent', () => {
   it('is good with no target configured or no selling price', () => {
     expect(classifyCostPercent(50, null)).toBe('good')
     expect(classifyCostPercent(null, 32)).toBe('good')
+  })
+})
+
+describe('pourCosting', () => {
+  it('computes pours per bottle and cost per pour for a standard spirit pour', () => {
+    // 750ml bottle costing 900, poured at 30ml -> 25 pours, 36 per pour
+    const result = pourCosting({ bottleSizeMl: 750, bottleCost: 900, pourSizeMl: 30 })
+    expect(result.poursPerBottle).toBeCloseTo(25)
+    expect(result.costPerPour).toBeCloseTo(36)
+    expect(result.overPourRisk).toBe(false)
+  })
+
+  it('flags over-pour risk for a generously sized pour', () => {
+    // 750ml at 60ml/pour -> only 12.5 pours per bottle
+    const result = pourCosting({ bottleSizeMl: 750, bottleCost: 900, pourSizeMl: 60 })
+    expect(result.poursPerBottle).toBeCloseTo(12.5)
+    expect(result.overPourRisk).toBe(true)
+  })
+
+  it('throws for non-positive bottle or pour size', () => {
+    expect(() => pourCosting({ bottleSizeMl: 0, bottleCost: 900, pourSizeMl: 30 })).toThrow()
+    expect(() => pourCosting({ bottleSizeMl: 750, bottleCost: 900, pourSizeMl: 0 })).toThrow()
   })
 })

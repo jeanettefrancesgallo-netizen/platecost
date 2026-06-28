@@ -48,6 +48,38 @@ export function recipeTotals(input: {
   }
 }
 
+export interface PourCosting {
+  poursPerBottle: number
+  costPerPour: number
+  /**
+   * Heuristic flag, not a measured fact: warns when the configured pour is
+   * generous enough that fewer than 15 pours come out of the bottle (e.g.
+   * a 750ml bottle poured at >50ml/pour), which is where over-pouring tends
+   * to quietly erode margin. Adjust the threshold per bar policy if needed.
+   */
+  overPourRisk: boolean
+}
+
+const OVER_POUR_THRESHOLD_POURS_PER_BOTTLE = 15
+
+export function pourCosting(input: {
+  bottleSizeMl: number
+  bottleCost: number
+  pourSizeMl: number
+}): PourCosting {
+  if (input.bottleSizeMl <= 0) throw new Error('bottleSizeMl must be greater than 0')
+  if (input.pourSizeMl <= 0) throw new Error('pourSizeMl must be greater than 0')
+
+  const poursPerBottle = input.bottleSizeMl / input.pourSizeMl
+  const costPerPour = input.bottleCost / poursPerBottle
+
+  return {
+    poursPerBottle,
+    costPerPour,
+    overPourRisk: poursPerBottle < OVER_POUR_THRESHOLD_POURS_PER_BOTTLE,
+  }
+}
+
 export type CostHealth = 'good' | 'warning' | 'bad'
 
 /**

@@ -60,7 +60,12 @@
       lines, total cost / cost per portion / cost % computed live and color-coded against the
       org's food or beverage cost target (green/amber/red), verified live with a real recipe
       (espresso beans + milk → exact expected cost % down to the decimal)
-- [ ] Beverage & Cocktail Pour Costing
+- [x] Beverage & Cocktail Pour Costing — bottle/keg size & cost → pour size → pours per bottle,
+      cost per pour, pour cost % (shares the Recipes infrastructure: a beverage recipe's pour cost
+      is folded in alongside any recipe_items mixers/garnish for full cocktail costing). Over-pour
+      risk flag (heuristic: <15 pours/bottle) shown inline. Separate Beverages nav page filters
+      `type = 'beverage'`; verified live including the over-pour warning actually appearing/
+      disappearing as pour size changes.
 - [x] Pricing & Margin Calculator basics (cost %, gross profit per portion, color-coded against
       target) folded into the Recipe Builder rather than a separate page — a standalone
       target-price-suggestion calculator is still open
