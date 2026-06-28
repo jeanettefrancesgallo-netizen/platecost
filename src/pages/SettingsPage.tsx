@@ -6,6 +6,7 @@ import { useCurrentOrg } from '@/features/organizations/useCurrentOrg'
 import { canManageTeamAndBilling } from '@/features/organizations/permissions'
 import { useUpdateOrganization } from '@/features/organizations/useUpdateOrganization'
 import { BillingSection } from '@/features/billing/BillingSection'
+import { CurrencySection } from '@/features/organizations/CurrencySection'
 import { CURRENCIES } from '@/lib/currency'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -67,6 +68,7 @@ export function SettingsPage() {
       <Tabs defaultValue="organization">
         <TabsList>
           <TabsTrigger value="organization">Organization</TabsTrigger>
+          <TabsTrigger value="currency">Currency</TabsTrigger>
           <TabsTrigger value="billing">Billing</TabsTrigger>
         </TabsList>
         <TabsContent value="organization">
@@ -111,6 +113,9 @@ export function SettingsPage() {
               </form>
             </CardContent>
           </Card>
+        </TabsContent>
+        <TabsContent value="currency">
+          <CurrencySection />
         </TabsContent>
         <TabsContent value="billing">
           <BillingSection />

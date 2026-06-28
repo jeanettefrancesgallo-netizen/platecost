@@ -85,7 +85,15 @@
       flag. Verified live: seeded an ingredient, changed its cost four times via the real app
       flow (including one >10% jump), and confirmed the chart, table, and red spike badge all
       rendered correctly with no clipping.
-- [ ] Currency handling — PHP default, per-tenant override, exchange rates
+- [x] Currency handling — PHP default at signup, per-tenant override (Settings → Organization, was
+      already in place), and now centralized exchange rates: a new `organization_exchange_rates`
+      table (org-scoped RLS, owner/manager write) lets an owner set "1 USD = X PHP" once instead of
+      retyping it on every ingredient. Settings → Currency tab manages the rates; the ingredient
+      form now defaults `exchangeRateToBase` from the org's saved rate when creating a new
+      ingredient in a foreign currency (still overridable per ingredient, and untouched when
+      editing an existing one). Verified live: saved a rate in Settings, confirmed it landed in the
+      database, then opened "Add ingredient," switched currency to USD, and watched the exchange
+      rate field auto-fill with the saved value.
 - [ ] Tenant Dashboard (cards, cost % chart, menu-engineering table)
 - [x] Reports / PDF + CSV export — `/reports` page with three exportable reports (Menu Costing,
       Ingredient Cost List, Inventory Valuation by location), each reusing the same costing/

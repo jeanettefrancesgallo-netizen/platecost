@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { toast } from 'sonner'
 import { useCategories } from '@/features/categories/useCategories'
 import { useCreateSupplier, useSuppliers } from '@/features/suppliers/useSuppliers'
+import { useExchangeRates } from '@/features/organizations/useExchangeRates'
 import { useCreateIngredient, useUpdateIngredient } from './useIngredientMutations'
 import { convertToBaseUnit, PURCHASE_UNITS_BY_BASE, type BaseUnit } from '@/lib/units'
 import { costPerBaseUnit, normalizeToBaseCurrency } from '@/lib/costing'
@@ -102,6 +103,7 @@ export function IngredientFormDialog({
   const [open, setOpen] = useState(false)
   const { data: categories = [] } = useCategories(organizationId)
   const { data: suppliers = [] } = useSuppliers(organizationId)
+  const { data: orgExchangeRates = [] } = useExchangeRates(organizationId)
   const createSupplier = useCreateSupplier(organizationId)
   const createIngredient = useCreateIngredient(organizationId)
   const updateIngredient = useUpdateIngredient(organizationId)
@@ -323,7 +325,18 @@ export function IngredientFormDialog({
               <Label>Currency</Label>
               <Select
                 value={watch('purchaseCurrency')}
-                onValueChange={(v) => v && setValue('purchaseCurrency', v)}
+                onValueChange={(v) => {
+                  if (!v) return
+                  setValue('purchaseCurrency', v)
+                  // Default from the org's saved rate for this currency when
+                  // creating a new ingredient — editing an existing one
+                  // leaves its own rate alone, since that may have been
+                  // deliberately overridden.
+                  if (!isEditing) {
+                    const orgRate = orgExchangeRates.find((r) => r.currency_code === v)
+                    setValue('exchangeRateToBase', orgRate?.rate_to_base ?? 1)
+                  }
+                }}
               >
                 <SelectTrigger>
                   <SelectValue />
