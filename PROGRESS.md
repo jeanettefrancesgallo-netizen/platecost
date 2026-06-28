@@ -94,7 +94,18 @@
       editing an existing one). Verified live: saved a rate in Settings, confirmed it landed in the
       database, then opened "Add ingredient," switched currency to USD, and watched the exchange
       rate field auto-fill with the saved value.
-- [ ] Tenant Dashboard (cards, cost % chart, menu-engineering table)
+- [x] Tenant Dashboard (cards, cost % chart, menu-engineering table) — replaced the static
+      placeholder with real data: summary cards (recipe count, avg cost %, ingredient count,
+      org-wide low-stock count), a Recharts bar chart of cost % per recipe (top 10, color-coded
+      against each recipe's food/beverage target band), and a menu-engineering table classifying
+      each priced recipe into Star/Plowhorse/Puzzle/Dog. Since this app has no POS/sales
+      integration, the popularity axis is approximated with cost % vs. the org average instead of
+      real sales mix — documented in the UI and in `classifyMenuEngineering` (new, unit-tested in
+      `recipeCosting.test.ts`) as a stand-in, not a verified sales classification. Caught and fixed
+      a real bug while verifying live: Recharts' bar entrance animation restarted on every
+      `useQuery` resolution (each one a new `chartData` array reference), so bars never finished
+      animating in and stayed stuck near-zero height — fixed with `isAnimationActive={false}`,
+      verified by inspecting actual rendered bar heights match.
 - [x] Reports / PDF + CSV export — `/reports` page with three exportable reports (Menu Costing,
       Ingredient Cost List, Inventory Valuation by location), each reusing the same costing/
       currency logic as the rest of the app (`summarizeRecipe`, `cost_per_base_unit`) so figures

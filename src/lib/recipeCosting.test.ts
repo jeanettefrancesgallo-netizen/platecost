@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { classifyCostPercent, pourCosting, recipeItemCost, recipeTotals } from './recipeCosting'
+import {
+  classifyCostPercent,
+  classifyMenuEngineering,
+  pourCosting,
+  recipeItemCost,
+  recipeTotals,
+} from './recipeCosting'
 
 describe('recipeItemCost', () => {
   it('converts the line quantity into the ingredient base unit before costing', () => {
@@ -89,6 +95,40 @@ describe('classifyCostPercent', () => {
   it('is good with no target configured or no selling price', () => {
     expect(classifyCostPercent(50, null)).toBe('good')
     expect(classifyCostPercent(null, 32)).toBe('good')
+  })
+})
+
+describe('classifyMenuEngineering', () => {
+  const avg = { avgGrossProfitPerPortion: 100, avgCostPercent: 30 }
+
+  it('is a star: above-average margin, at-or-below-average cost %', () => {
+    expect(
+      classifyMenuEngineering({ grossProfitPerPortion: 150, costPercent: 25, ...avg }),
+    ).toBe('star')
+  })
+
+  it('is a plowhorse: below-average margin, at-or-below-average cost %', () => {
+    expect(
+      classifyMenuEngineering({ grossProfitPerPortion: 50, costPercent: 25, ...avg }),
+    ).toBe('plowhorse')
+  })
+
+  it('is a puzzle: above-average margin, above-average cost %', () => {
+    expect(
+      classifyMenuEngineering({ grossProfitPerPortion: 150, costPercent: 35, ...avg }),
+    ).toBe('puzzle')
+  })
+
+  it('is a dog: below-average margin, above-average cost %', () => {
+    expect(
+      classifyMenuEngineering({ grossProfitPerPortion: 50, costPercent: 35, ...avg }),
+    ).toBe('dog')
+  })
+
+  it('is unclassifiable with no selling price', () => {
+    expect(
+      classifyMenuEngineering({ grossProfitPerPortion: null, costPercent: null, ...avg }),
+    ).toBeNull()
   })
 })
 

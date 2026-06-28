@@ -88,6 +88,33 @@ export type CostHealth = 'good' | 'warning' | 'bad'
  * (close enough to act on), and further over is "bad". No target band
  * configured -> always "good" (nothing to flag against).
  */
+export type MenuEngineeringQuadrant = 'star' | 'plowhorse' | 'puzzle' | 'dog'
+
+/**
+ * Classic menu engineering plots profitability against sales popularity, but
+ * this app has no POS/sales integration to know what actually sells. As a
+ * stand-in until that exists, the second axis uses cost % (cheaper to make
+ * is treated as a proxy for "easier to sell profitably") instead of real
+ * popularity — so treat this as a cost/margin health check, not a verified
+ * sales-mix classification.
+ */
+export function classifyMenuEngineering(input: {
+  grossProfitPerPortion: number | null
+  avgGrossProfitPerPortion: number
+  costPercent: number | null
+  avgCostPercent: number
+}): MenuEngineeringQuadrant | null {
+  if (input.grossProfitPerPortion === null || input.costPercent === null) return null
+
+  const highMargin = input.grossProfitPerPortion >= input.avgGrossProfitPerPortion
+  const lowCost = input.costPercent <= input.avgCostPercent
+
+  if (highMargin && lowCost) return 'star'
+  if (!highMargin && lowCost) return 'plowhorse'
+  if (highMargin && !lowCost) return 'puzzle'
+  return 'dog'
+}
+
 export function classifyCostPercent(
   costPercent: number | null,
   targetMax: number | null | undefined,
