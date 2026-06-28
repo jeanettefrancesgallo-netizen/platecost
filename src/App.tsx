@@ -20,7 +20,7 @@ import { BeveragesPage } from '@/pages/BeveragesPage'
 import { InventoryPage } from '@/pages/InventoryPage'
 import { TeamPage } from '@/pages/TeamPage'
 import { SettingsPage } from '@/pages/SettingsPage'
-import { PlaceholderPage } from '@/pages/PlaceholderPage'
+import { ReportsPage } from '@/pages/ReportsPage'
 import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage'
 import { AdminTenantsPage } from '@/pages/admin/AdminTenantsPage'
 import { AdminTenantDetailPage } from '@/pages/admin/AdminTenantDetailPage'
@@ -61,7 +61,7 @@ function App() {
                 <Route path="/recipes/:id" element={<RecipeDetailPage />} />
                 <Route path="/beverages" element={<BeveragesPage />} />
                 <Route path="/inventory" element={<InventoryPage />} />
-                <Route path="/reports" element={<PlaceholderPage title="Reports" />} />
+                <Route path="/reports" element={<ReportsPage />} />
                 <Route path="/team" element={<TeamPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
               </Route>

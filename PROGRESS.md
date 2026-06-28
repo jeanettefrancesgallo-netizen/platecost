@@ -79,7 +79,12 @@
 - [ ] Supplier Price History (timestamped, chart, spike flagging)
 - [ ] Currency handling — PHP default, per-tenant override, exchange rates
 - [ ] Tenant Dashboard (cards, cost % chart, menu-engineering table)
-- [ ] Reports / PDF + CSV export
+- [x] Reports / PDF + CSV export — `/reports` page with three exportable reports (Menu Costing,
+      Ingredient Cost List, Inventory Valuation by location), each reusing the same costing/
+      currency logic as the rest of the app (`summarizeRecipe`, `cost_per_base_unit`) so figures
+      stay consistent everywhere. CSV via PapaParse, PDF via jsPDF + jspdf-autotable. Verified live
+      end-to-end with a seeded test org: all 6 export buttons produce real, correctly-formatted
+      CSV/PDF files with accurate figures.
 
 ## Billing
 
