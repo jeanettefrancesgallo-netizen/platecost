@@ -49,8 +49,16 @@ export function RecordMovementDialog({
 
   const onSubmit = async () => {
     const qty = Number(quantity)
-    if (!selectedIngredient || !(qty > 0)) {
-      toast.error('Choose an ingredient and a quantity greater than 0')
+    // Adjustment is a signed correction (positive adds stock, negative
+    // removes it, e.g. after a physical count) — every other type is
+    // always a positive magnitude in one fixed direction.
+    const isValid = changeType === 'adjustment' ? qty !== 0 : qty > 0
+    if (!selectedIngredient || !isValid) {
+      toast.error(
+        changeType === 'adjustment'
+          ? 'Choose an ingredient and a non-zero quantity'
+          : 'Choose an ingredient and a quantity greater than 0',
+      )
       return
     }
     try {
@@ -122,6 +130,12 @@ export function RecordMovementDialog({
               />
             </div>
           </div>
+          {changeType === 'adjustment' && (
+            <p className="text-xs text-muted-foreground">
+              Adjustment is a correction, e.g. after a physical count — enter a positive number to
+              add stock, or a negative number to remove it.
+            </p>
+          )}
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="movement-note">Note (optional)</Label>
             <Input id="movement-note" value={note} onChange={(e) => setNote(e.target.value)} />

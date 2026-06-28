@@ -21,6 +21,7 @@ import { pourCosting, recipeItemCost } from '@/lib/recipeCosting'
 import { PURCHASE_UNITS_BY_BASE, type BaseUnit } from '@/lib/units'
 import { formatCurrency } from '@/lib/currency'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -76,11 +77,18 @@ export function RecipeDetailPage() {
   const [newIngredientId, setNewIngredientId] = useState('')
   const [newQuantity, setNewQuantity] = useState('1')
   const [newUnit, setNewUnit] = useState('')
+  // Most beverages (coffee, tea, smoothies) never use pour costing — only
+  // poured spirits/cocktails do — so the bottle/pour fields stay hidden
+  // behind this toggle instead of cluttering every beverage recipe. `null`
+  // means "no manual toggle yet, fall back to whatever the recipe already
+  // has saved" — a pure derivation, not state set from an effect.
+  const [pourCostingOverride, setPourCostingOverride] = useState<boolean | null>(null)
 
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<DetailsForm>({ resolver: zodResolver(detailsSchema) })
 
@@ -102,6 +110,10 @@ export function RecipeDetailPage() {
   if (isLoading || !recipe || !currentOrg) {
     return <p className="text-muted-foreground">Loading…</p>
   }
+
+  const hasSavedPourData =
+    recipe.bottle_size_ml !== null || recipe.bottle_cost !== null || recipe.pour_size_ml !== null
+  const trackPourCosting = pourCostingOverride ?? hasSavedPourData
 
   const totals = summarizeRecipe(recipe)
   const targetMax =
@@ -231,44 +243,65 @@ export function RecipeDetailPage() {
         </div>
 
         {recipe.type === 'beverage' && (
-          <div className="flex flex-wrap items-end gap-3 border-t border-border pt-3">
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="bottle-size">Bottle size (ml)</Label>
-              <Input
-                id="bottle-size"
-                type="number"
-                step="any"
+          <div className="flex flex-col gap-3 border-t border-border pt-3">
+            <label className="flex items-center gap-2 text-sm">
+              <Checkbox
+                checked={trackPourCosting}
                 disabled={!canManage}
-                className="w-32"
-                {...register('bottleSizeMl', { valueAsNumber: true })}
+                onCheckedChange={(checked) => {
+                  const isChecked = checked === true
+                  setPourCostingOverride(isChecked)
+                  if (!isChecked) {
+                    setValue('bottleSizeMl', undefined)
+                    setValue('bottleCost', undefined)
+                    setValue('pourSizeMl', undefined)
+                  }
+                }}
               />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="bottle-cost">Bottle cost</Label>
-              <Input
-                id="bottle-cost"
-                type="number"
-                step="any"
-                disabled={!canManage}
-                className="w-32"
-                {...register('bottleCost', { valueAsNumber: true })}
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="pour-size">Pour size (ml)</Label>
-              <Input
-                id="pour-size"
-                type="number"
-                step="any"
-                disabled={!canManage}
-                className="w-32"
-                {...register('pourSizeMl', { valueAsNumber: true })}
-              />
-            </div>
-            {canManage && (
-              <Button type="submit" variant="outline" disabled={updateRecipe.isPending}>
-                Save pour details
-              </Button>
+              This is a poured spirit or cocktail (tracks cost per pour from a bottle)
+            </label>
+
+            {trackPourCosting && (
+              <div className="flex flex-wrap items-end gap-3">
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="bottle-size">Bottle size (ml)</Label>
+                  <Input
+                    id="bottle-size"
+                    type="number"
+                    step="any"
+                    disabled={!canManage}
+                    className="w-32"
+                    {...register('bottleSizeMl', { valueAsNumber: true })}
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="bottle-cost">Bottle cost</Label>
+                  <Input
+                    id="bottle-cost"
+                    type="number"
+                    step="any"
+                    disabled={!canManage}
+                    className="w-32"
+                    {...register('bottleCost', { valueAsNumber: true })}
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="pour-size">Pour size (ml)</Label>
+                  <Input
+                    id="pour-size"
+                    type="number"
+                    step="any"
+                    disabled={!canManage}
+                    className="w-32"
+                    {...register('pourSizeMl', { valueAsNumber: true })}
+                  />
+                </div>
+                {canManage && (
+                  <Button type="submit" variant="outline" disabled={updateRecipe.isPending}>
+                    Save pour details
+                  </Button>
+                )}
+              </div>
             )}
           </div>
         )}

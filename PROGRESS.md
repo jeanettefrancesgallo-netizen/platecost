@@ -65,7 +65,11 @@
       is folded in alongside any recipe_items mixers/garnish for full cocktail costing). Over-pour
       risk flag (heuristic: <15 pours/bottle) shown inline. Separate Beverages nav page filters
       `type = 'beverage'`; verified live including the over-pour warning actually appearing/
-      disappearing as pour size changes.
+      disappearing as pour size changes. The bottle/pour fields used to show on every beverage
+      recipe regardless of whether it actually involved a poured spirit, which a real café owner
+      (testing with their actual menu) found genuinely confusing for a plain coffee drink — fixed
+      by hiding them behind a "This is a poured spirit or cocktail" checkbox, defaulting to
+      checked only when the recipe already has saved bottle/pour data.
 - [x] Pricing & Margin Calculator basics (cost %, gross profit per portion, color-coded against
       target) folded into the Recipe Builder rather than a separate page — a standalone
       target-price-suggestion calculator is still open
@@ -76,6 +80,16 @@
       the brief's "Staff: limited entry"), recent-activity feed. Location Manager (add/rename/delete,
       plan-limit enforced server-side already). Verified live: received 30 → used 25 → correctly
       flagged low stock at the configured reorder level, with an accurate movement log.
+
+  Real bug found during a live owner walkthrough (not synthetic test data): `apply_inventory_log()`
+  treated every change_type other than `received` as a decrease, including `adjustment` — so there
+  was no way to correct stock *upward* after a physical count (e.g. fixing an undercount), and
+  "Adjustment" was silently identical to "Wasted"/"Used". A real adjustment entry intended to add
+  12,000ml of milk instead subtracted it, driving stock to -23,976ml after a follow-up "wasted"
+  entry compounded it. Fixed: `adjustment` is now a signed delta (positive adds, negative removes);
+  the form now allows negative quantities for that type only, with a hint explaining the sign
+  convention, and rejects zero. Verified live: corrected the actual corrupted stock value back to
+  the owner's real on-hand count via a signed adjustment, confirmed in the database.
 - [x] Supplier Price History (timestamped, chart, spike flagging) — the `price_history` table and
       its `on_ingredient_cost_change` trigger already existed from the foundation migrations
       (auto-recorded on every `purchase_unit_cost` edit); added the missing frontend: a "History"
