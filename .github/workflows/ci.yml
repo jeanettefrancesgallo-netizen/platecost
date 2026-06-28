@@ -9,6 +9,8 @@ jobs:
   quality:
     name: Typecheck, lint, unit tests, build
     runs-on: ubuntu-latest
+    env:
+      VITE_SUPABASE_URL: placeholder
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
