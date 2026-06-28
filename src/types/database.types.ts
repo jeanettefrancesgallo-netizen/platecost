@@ -995,6 +995,15 @@ export type Database = {
       is_org_owner: { Args: { p_org_id: string }; Returns: boolean }
       is_super_admin: { Args: never; Returns: boolean }
       org_role: { Args: { p_org_id: string }; Returns: string }
+      set_inventory_levels: {
+        Args: {
+          p_ingredient_id: string
+          p_location_id: string
+          p_par_level: number
+          p_reorder_level: number
+        }
+        Returns: undefined
+      }
       update_organization: {
         Args: { p_base_currency: string; p_name: string; p_org_id: string }
         Returns: {

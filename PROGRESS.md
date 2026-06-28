@@ -69,7 +69,13 @@
 - [x] Pricing & Margin Calculator basics (cost %, gross profit per portion, color-coded against
       target) folded into the Recipe Builder rather than a separate page — a standalone
       target-price-suggestion calculator is still open
-- [ ] Inventory Tracking (stock, par levels, low-stock alerts, adjustment log)
+- [x] Inventory Tracking — per-location stock on hand (multi-location, since `locations` already
+      supported it), par/reorder levels (owner/manager only, via a new `set_inventory_levels` RPC
+      since there's no direct write policy on `inventory_stock` by design), low-stock banner + per-row
+      badge, stock-adjustment log (received/used/wasted/adjustment, any member can record — matches
+      the brief's "Staff: limited entry"), recent-activity feed. Location Manager (add/rename/delete,
+      plan-limit enforced server-side already). Verified live: received 30 → used 25 → correctly
+      flagged low stock at the configured reorder level, with an accurate movement log.
 - [ ] Supplier Price History (timestamped, chart, spike flagging)
 - [ ] Currency handling — PHP default, per-tenant override, exchange rates
 - [ ] Tenant Dashboard (cards, cost % chart, menu-engineering table)
