@@ -26,7 +26,6 @@ jobs:
     name: RLS isolation test (live Supabase project)
     runs-on: ubuntu-latest
     needs: quality
-    if: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY != '' }}
     env:
       VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
       VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
