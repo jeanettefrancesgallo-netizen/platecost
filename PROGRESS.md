@@ -23,6 +23,10 @@
       last-owner protected), Settings page (org name/currency, owner-only) — enforced in both RLS
       and UI, verified in a real browser with two actual logged-in roles
 - [x] RLS isolation test (Org A cannot read Org B's rows) — `npm run test:integration`, passing against the live project
+- [x] Fixed a real bug found while testing: the last-owner-protection trigger fired during the
+      *cascading* delete of an organization's own membership rows, which made it impossible to
+      ever delete an organization at all (including via the admin console). Fixed to skip the
+      check once the parent organization row is already gone.
 
 ## Super-Admin Console
 
@@ -51,9 +55,15 @@
       base unit) and live cost-per-base-unit preview while filling the form, normalized into the
       org's base currency. Search + category filter. Verified live in a real browser, including a
       fixed bug where the category/supplier dropdowns displayed raw UUIDs instead of names.
-- [ ] Recipe / Menu Item Builder with unit conversion + live costing
+- [x] Recipe / Menu Item Builder with unit conversion + live costing — add ingredient lines by
+      quantity + unit (converted into the ingredient's base unit), optional labor & packaging
+      lines, total cost / cost per portion / cost % computed live and color-coded against the
+      org's food or beverage cost target (green/amber/red), verified live with a real recipe
+      (espresso beans + milk → exact expected cost % down to the decimal)
 - [ ] Beverage & Cocktail Pour Costing
-- [ ] Pricing & Margin Calculator with target-based color coding
+- [x] Pricing & Margin Calculator basics (cost %, gross profit per portion, color-coded against
+      target) folded into the Recipe Builder rather than a separate page — a standalone
+      target-price-suggestion calculator is still open
 - [ ] Inventory Tracking (stock, par levels, low-stock alerts, adjustment log)
 - [ ] Supplier Price History (timestamped, chart, spike flagging)
 - [ ] Currency handling — PHP default, per-tenant override, exchange rates
