@@ -5,18 +5,17 @@ on:
     branches: [main, master]
   pull_request:
 
-# Dummy but well-formed values so `vite build`/`vite dev` (and the Supabase
-# client it initializes) don't choke on missing env when real secrets aren't
-# configured yet — the smoke e2e test never reads real data, it just checks
-# that the page renders.
-env:
-  VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://placeholder.supabase.co' }}
-  VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
-
 jobs:
   quality:
     name: Typecheck, lint, unit tests, build
     runs-on: ubuntu-latest
+    # Dummy but well-formed values so `vite build` (and the Supabase client it
+    # initializes) doesn't choke on missing env when real secrets aren't
+    # configured yet. Job-level env (unlike workflow-level env) can reference
+    # secrets.
+    env:
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -33,6 +32,9 @@ jobs:
     name: Playwright smoke test
     runs-on: ubuntu-latest
     needs: quality
+    env:
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
