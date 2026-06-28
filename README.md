@@ -74,6 +74,19 @@ See [PROGRESS.md](./PROGRESS.md) for the build checklist.
 | `npm run e2e` | Playwright end-to-end tests (run `npx playwright install` once first) |
 | `npm run test:integration` | RLS isolation tests against your real Supabase project (needs `SUPABASE_SERVICE_ROLE_KEY` in `.env.local`) |
 
+## CI
+
+[.github/workflows/ci.yml](./.github/workflows/ci.yml) runs on every push/PR once this repo is on
+GitHub:
+
+- **quality** — typecheck, lint, unit tests, production build. No secrets needed.
+- **e2e** — Playwright smoke test. Builds/runs against placeholder Supabase env vars if the real
+  ones aren't configured as repo secrets, since the smoke test only checks that the app renders.
+- **integration** — the RLS isolation test against the real Supabase project. Skipped until
+  `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` are added as repo
+  secrets (Settings → Secrets and variables → Actions); it only touches its own throwaway test
+  orgs, same as running it locally.
+
 ## Database
 
 Schema lives as SQL migrations in [supabase/migrations](./supabase/migrations), so the database

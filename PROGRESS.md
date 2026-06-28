@@ -143,3 +143,14 @@
 - [ ] `npm run lint`
 - [ ] `npm run test`
 - [ ] `npm run e2e` (happy path)
+
+## CI
+
+- [x] GitHub Actions workflow (`.github/workflows/ci.yml`): typecheck/lint/unit-test/build always;
+      Playwright smoke test with placeholder Supabase env vars if real secrets aren't configured;
+      RLS integration test against the live project, gated to skip until
+      `SUPABASE_SERVICE_ROLE_KEY` (+ the two `VITE_SUPABASE_*` keys) are added as repo secrets.
+      Verified locally end-to-end before committing: ran the build and the e2e smoke test with
+      placeholder env vars (the exact condition CI hits before secrets are added) to confirm
+      neither breaks without real credentials. Not yet exercised by an actual GitHub Actions run —
+      this repo has no GitHub remote yet, so the workflow activates the first time it's pushed.
