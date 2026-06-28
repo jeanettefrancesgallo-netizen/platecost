@@ -1,5 +1,13 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { LayoutDashboard, Building2, Megaphone, Flag, ScrollText, ArrowLeft } from 'lucide-react'
+import {
+  LayoutDashboard,
+  Building2,
+  Megaphone,
+  Flag,
+  ScrollText,
+  ArrowLeft,
+  Wallet,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { UserMenu } from '@/components/layout/UserMenu'
@@ -7,6 +15,7 @@ import { UserMenu } from '@/components/layout/UserMenu'
 const NAV_ITEMS = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/tenants', label: 'Tenants', icon: Building2 },
+  { to: '/admin/payments', label: 'Payments', icon: Wallet },
   { to: '/admin/announcements', label: 'Announcements', icon: Megaphone },
   { to: '/admin/feature-flags', label: 'Feature flags', icon: Flag },
   { to: '/admin/audit-log', label: 'Audit log', icon: ScrollText },

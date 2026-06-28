@@ -24,6 +24,7 @@ import { PlaceholderPage } from '@/pages/PlaceholderPage'
 import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage'
 import { AdminTenantsPage } from '@/pages/admin/AdminTenantsPage'
 import { AdminTenantDetailPage } from '@/pages/admin/AdminTenantDetailPage'
+import { AdminPaymentsPage } from '@/pages/admin/AdminPaymentsPage'
 import { AdminAnnouncementsPage } from '@/pages/admin/AdminAnnouncementsPage'
 import { AdminFeatureFlagsPage } from '@/pages/admin/AdminFeatureFlagsPage'
 import { AdminAuditLogPage } from '@/pages/admin/AdminAuditLogPage'
@@ -76,6 +77,7 @@ function App() {
                 <Route path="/admin" element={<AdminDashboardPage />} />
                 <Route path="/admin/tenants" element={<AdminTenantsPage />} />
                 <Route path="/admin/tenants/:id" element={<AdminTenantDetailPage />} />
+                <Route path="/admin/payments" element={<AdminPaymentsPage />} />
                 <Route path="/admin/announcements" element={<AdminAnnouncementsPage />} />
                 <Route path="/admin/feature-flags" element={<AdminFeatureFlagsPage />} />
                 <Route path="/admin/audit-log" element={<AdminAuditLogPage />} />

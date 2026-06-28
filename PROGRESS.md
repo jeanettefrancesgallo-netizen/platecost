@@ -83,9 +83,27 @@
 
 ## Billing
 
-- [ ] Plan tiers (Free / Pro / Enterprise) + feature gating
-- [ ] Stripe test-mode subscriptions, Settings → Billing
-- [ ] Stripe stubbed gracefully when keys are absent
+- [x] Plan tiers (Free / Pro / Enterprise) + feature gating (plan limits already enforced
+      server-side via triggers from the foundation migrations)
+- [x] **Manual billing (no Stripe, per user request)** — GCash / bank transfer instead of card
+      payments: tenant Settings → Billing shows current plan/status/renewal/usage, an "Upgrade
+      plan" flow displays the platform's configured payment methods (GCash number + account name
+      seeded as live data — intentionally not committed to git, since it's personal payment info)
+      and PHP/USD list prices, the owner submits a reference number, and a platform admin reviews
+      and approves/rejects from `/admin/payments` (also where GCash/bank entries are managed).
+      Approval activates the subscription via a `SECURITY DEFINER` RPC (same pattern as the rest
+      of the admin console) that updates `subscriptions` and, through the existing sync trigger,
+      `organizations.plan/status`. Verified the complete loop live: submit → pending → admin
+      approve → tenant sees Pro/active with the correct renewal date — and confirmed in the
+      database directly, not just the UI.
+- [x] Stripe stubbed gracefully when keys are absent (moot now — no Stripe integration at all per
+      this request, but `@stripe/stripe-js` stays installed in case card payments are added later)
+
+  Bug fixed along the way: Base UI's `Select` doesn't reactively re-resolve its displayed label if
+  the bound `value` didn't match any `<SelectItem>` at first mount (e.g. while the plans list was
+  still loading) — it stays stuck on the placeholder even after the matching item appears. Fixed by
+  not mounting the plan/payment-method selects until their data has actually loaded, rather than
+  guessing a default value before any item exists for it.
 
 ## Quality gates (run before considering a feature done)
 

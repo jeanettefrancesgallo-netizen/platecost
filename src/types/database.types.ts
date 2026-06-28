@@ -613,6 +613,89 @@ export type Database = {
           },
         ]
       }
+      payment_submissions: {
+        Row: {
+          admin_notes: string | null
+          amount: number
+          billing_cycle: string
+          created_at: string
+          currency: string
+          id: string
+          notes: string | null
+          organization_id: string
+          payment_method: string
+          plan: string
+          reference_number: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          submitted_by: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          amount: number
+          billing_cycle: string
+          created_at?: string
+          currency: string
+          id?: string
+          notes?: string | null
+          organization_id: string
+          payment_method: string
+          plan: string
+          reference_number: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_by: string
+        }
+        Update: {
+          admin_notes?: string | null
+          amount?: number
+          billing_cycle?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          notes?: string | null
+          organization_id?: string
+          payment_method?: string
+          plan?: string
+          reference_number?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_submissions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_submissions_plan_fkey"
+            columns: ["plan"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["key"]
+          },
+          {
+            foreignKeyName: "payment_submissions_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_submissions_submitted_by_fkey"
+            columns: ["submitted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       plans: {
         Row: {
           is_active: boolean
@@ -621,7 +704,9 @@ export type Database = {
           max_locations: number | null
           max_members: number | null
           name: string
+          price_monthly_php: number
           price_monthly_usd: number
+          price_yearly_php: number
           price_yearly_usd: number
           sort_order: number
         }
@@ -632,7 +717,9 @@ export type Database = {
           max_locations?: number | null
           max_members?: number | null
           name: string
+          price_monthly_php?: number
           price_monthly_usd?: number
+          price_yearly_php?: number
           price_yearly_usd?: number
           sort_order?: number
         }
@@ -643,8 +730,40 @@ export type Database = {
           max_locations?: number | null
           max_members?: number | null
           name?: string
+          price_monthly_php?: number
           price_monthly_usd?: number
+          price_yearly_php?: number
           price_yearly_usd?: number
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      platform_payment_methods: {
+        Row: {
+          created_at: string
+          details: Json
+          id: string
+          is_active: boolean
+          label: string
+          method: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          details?: Json
+          id?: string
+          is_active?: boolean
+          label: string
+          method: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          details?: Json
+          id?: string
+          is_active?: boolean
+          label?: string
+          method?: string
           sort_order?: number
         }
         Relationships: []
@@ -932,6 +1051,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_approve_payment: {
+        Args: { p_submission_id: string }
+        Returns: undefined
+      }
       admin_change_organization_plan: {
         Args: { p_org_id: string; p_plan: string }
         Returns: undefined
@@ -947,6 +1070,10 @@ export type Database = {
       admin_get_platform_stats: { Args: never; Returns: Json }
       admin_log_organization_view: {
         Args: { p_org_id: string }
+        Returns: undefined
+      }
+      admin_reject_payment: {
+        Args: { p_notes: string; p_submission_id: string }
         Returns: undefined
       }
       admin_set_organization_status: {
