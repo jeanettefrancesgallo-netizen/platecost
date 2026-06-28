@@ -76,7 +76,15 @@
       the brief's "Staff: limited entry"), recent-activity feed. Location Manager (add/rename/delete,
       plan-limit enforced server-side already). Verified live: received 30 → used 25 → correctly
       flagged low stock at the configured reorder level, with an accurate movement log.
-- [ ] Supplier Price History (timestamped, chart, spike flagging)
+- [x] Supplier Price History (timestamped, chart, spike flagging) — the `price_history` table and
+      its `on_ingredient_cost_change` trigger already existed from the foundation migrations
+      (auto-recorded on every `purchase_unit_cost` edit); added the missing frontend: a "History"
+      button per ingredient opens a dialog with a Recharts line chart of cost over time plus a
+      full changelog table (old/new cost, % change). Any single change over +10% is flagged red as
+      a spike — a heuristic threshold, not a measured fact, same pattern as the beverage over-pour
+      flag. Verified live: seeded an ingredient, changed its cost four times via the real app
+      flow (including one >10% jump), and confirmed the chart, table, and red spike badge all
+      rendered correctly with no clipping.
 - [ ] Currency handling — PHP default, per-tenant override, exchange rates
 - [ ] Tenant Dashboard (cards, cost % chart, menu-engineering table)
 - [x] Reports / PDF + CSV export — `/reports` page with three exportable reports (Menu Costing,

@@ -7,6 +7,7 @@ import { CategoryManagerDialog } from '@/features/categories/CategoryManagerDial
 import { useIngredients } from '@/features/ingredients/useIngredients'
 import { useDeleteIngredient } from '@/features/ingredients/useIngredientMutations'
 import { IngredientFormDialog } from '@/features/ingredients/IngredientFormDialog'
+import { PriceHistoryDialog } from '@/features/ingredients/PriceHistoryDialog'
 import { normalizeToBaseCurrency } from '@/lib/costing'
 import { formatCurrency } from '@/lib/currency'
 import { Button } from '@/components/ui/button'
@@ -93,20 +94,21 @@ export function IngredientsPage() {
               <th className="px-3 py-2 text-left">Supplier</th>
               <th className="px-3 py-2 text-left">Purchase</th>
               <th className="px-3 py-2 text-left">Cost / base unit</th>
+              <th className="px-3 py-2 text-left">History</th>
               {canManage && <th className="px-3 py-2 text-left">Actions</th>}
             </tr>
           </thead>
           <tbody>
             {isLoading && (
               <tr>
-                <td colSpan={6} className="px-3 py-4 text-center text-muted-foreground">
+                <td colSpan={canManage ? 7 : 6} className="px-3 py-4 text-center text-muted-foreground">
                   Loading…
                 </td>
               </tr>
             )}
             {!isLoading && ingredients.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-3 py-4 text-center text-muted-foreground">
+                <td colSpan={canManage ? 7 : 6} className="px-3 py-4 text-center text-muted-foreground">
                   No ingredients yet.
                 </td>
               </tr>
@@ -136,6 +138,17 @@ export function IngredientsPage() {
                     {costInBase !== null
                       ? `${formatCurrency(costInBase, baseCurrency)} / ${ingredient.base_unit}`
                       : '—'}
+                  </td>
+                  <td className="px-3 py-2">
+                    <PriceHistoryDialog
+                      ingredientId={ingredient.id}
+                      ingredientName={ingredient.name}
+                      trigger={
+                        <Button size="sm" variant="ghost">
+                          History
+                        </Button>
+                      }
+                    />
                   </td>
                   {canManage && (
                     <td className="px-3 py-2">
