@@ -178,6 +178,7 @@ export function ReportsPage() {
     'Purchases value',
     'Ending qty',
     'Ending value',
+    'COGS',
   ]
   const cogsRows = cogsReport.map((c) => [
     c.name,
@@ -188,6 +189,7 @@ export function ReportsPage() {
     formatCurrency(c.purchasesValue, baseCurrency),
     c.endingQty,
     formatCurrency(c.endingValue, baseCurrency),
+    formatCurrency(c.cogs, baseCurrency),
   ])
   const totalCogs = cogsReport.reduce((sum, c) => sum + c.cogs, 0)
 

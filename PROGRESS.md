@@ -162,6 +162,17 @@
       the inventory-adjustment-sign fix above — not a bug in this feature, a known consequence of
       reconstructing history through an earlier, now-fixed bug.
 
+  Real bug found in the same walkthrough, while the owner tested a real purchase → usage → ending
+  count cycle for the first time: the table showed Beginning/Purchases/Ending columns but never
+  the actual per-ingredient COGS figure — only the aggregate total appeared in small text above
+  the table. The owner reasonably read the "Ending value" column as the COGS, which happened to
+  produce a plausible-looking but wrong number. Fixed by adding an explicit COGS column to the
+  table (and CSV/PDF export) so each row's figure doesn't have to be inferred. (Separately, also
+  walked the owner through a real ordering mistake — entering "Physical count" before logging the
+  "Used" quantity double-subtracted the usage — which is expected behavior, not a bug: physical
+  count is a snapshot, and the correct workflow is Purchases → Used/Wastage as they happen →
+  Physical count last.)
+
 ## Billing
 
 - [x] Plan tiers (Free / Pro / Enterprise) + feature gating (plan limits already enforced
