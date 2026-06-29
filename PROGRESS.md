@@ -19,6 +19,19 @@
 - [x] `organizations`, `organization_members`, `locations` tables + RLS
 - [x] Signup → create organization → setup wizard → dashboard flow (verified in a real browser)
 - [x] Org switcher in header
+
+  Two real bugs found during a live owner walkthrough with a real account (not synthetic test
+  data): (1) `DropdownMenuLabel` requires a `DropdownMenuGroup` wrapper in this Base UI version —
+  used bare in `UserMenu`, it threw "MenuGroupContext is missing" and the whole menu popup failed
+  to render, appearing completely blank. (2) Base UI's `Menu.Item` has no `onSelect` prop at all,
+  only `onClick` — the shadcn wrapper spread it straight onto the underlying `<div>`, where
+  `onSelect` is a real but unrelated React DOM event (text-selection, not clicks) that silently
+  never fires. This meant **every** `DropdownMenuItem` using `onSelect` app-wide was non-functional
+  with zero errors or warnings: logging out and switching organizations both did nothing. Fixed at
+  the shared `DropdownMenuItem` component level (accepts `onSelect`, wires it to `onClick`) so the
+  conventional prop name keeps working for any future caller instead of failing silently again.
+  Verified live: confirmed the actual `/auth/v1/logout` network call now fires and redirects to
+  `/login`, and that switching between two real orgs updates the dashboard correctly.
 - [x] Role enforcement (Owner / Manager / Staff): Team page (invite/role-change/remove, owner-only,
       last-owner protected), Settings page (org name/currency, owner-only) — enforced in both RLS
       and UI, verified in a real browser with two actual logged-in roles
