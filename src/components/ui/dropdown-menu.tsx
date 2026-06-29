@@ -75,16 +75,28 @@ function DropdownMenuItem({
   className,
   inset,
   variant = "default",
+  onSelect,
+  onClick,
   ...props
 }: MenuPrimitive.Item.Props & {
   inset?: boolean
   variant?: "default" | "destructive"
+  // Base UI's Menu.Item has no `onSelect` — only `onClick`. Accepting the
+  // shadcn/Radix-conventional `onSelect` name here and wiring it to
+  // onClick means callers using the prop everyone reaches for out of habit
+  // still work, instead of silently doing nothing (onSelect is a real but
+  // unrelated React DOM event on a <div>, so it fails with no warning).
+  onSelect?: () => void
 }) {
   return (
     <MenuPrimitive.Item
       data-slot="dropdown-menu-item"
       data-inset={inset}
       data-variant={variant}
+      onClick={(event) => {
+        onSelect?.()
+        onClick?.(event)
+      }}
       className={cn(
         "group/dropdown-menu-item relative flex cursor-default items-center gap-1.5 rounded-md px-1.5 py-1 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-inset:pl-7 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-[variant=destructive]:*:[svg]:text-destructive",
         className
