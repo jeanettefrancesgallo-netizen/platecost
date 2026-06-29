@@ -139,6 +139,18 @@
       stay consistent everywhere. CSV via PapaParse, PDF via jsPDF + jspdf-autotable. Verified live
       end-to-end with a seeded test org: all 6 export buttons produce real, correctly-formatted
       CSV/PDF files with accurate figures.
+- [x] Cost of Goods Sold report (Beginning + Purchases − Ending), per user request — reconstructs
+      beginning/ending inventory for a chosen date range from the existing `inventory_log` history
+      rather than needing a new snapshot table: quantity at any point in time = current quantity
+      on hand minus the net of every signed movement since that point. Simplification, documented
+      in the UI: every quantity is valued at the ingredient's *current* cost, not the price
+      actually paid at the time of each movement, so this is a quick gut-check figure, not true
+      historical-cost accounting. Verified live against the real owner's actual data: a clean
+      same-day period correctly shows ₱0 COGS for every ingredient (nothing's been sold/used yet,
+      only received/wasted/adjusted), and the default this-month period correctly isolates a known
+      artifact to exactly the one ingredient (milk) whose history includes a row recorded before
+      the inventory-adjustment-sign fix above — not a bug in this feature, a known consequence of
+      reconstructing history through an earlier, now-fixed bug.
 
 ## Billing
 

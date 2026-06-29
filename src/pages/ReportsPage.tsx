@@ -5,11 +5,14 @@ import {
   useRecipeCostingReport,
   useIngredientCostReport,
   useInventoryValuationReport,
+  useCogsReport,
 } from '@/features/reports/useReportData'
 import { formatCurrency } from '@/lib/currency'
 import { exportCsv, exportPdf } from '@/lib/exportFile'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -110,6 +113,10 @@ function ReportCard({
   )
 }
 
+const today = new Date()
+const todayIso = today.toISOString().slice(0, 10)
+const startOfMonthIso = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().slice(0, 10)
+
 export function ReportsPage() {
   const { currentOrg } = useCurrentOrg()
   const orgId = currentOrg?.organizationId
@@ -119,9 +126,13 @@ export function ReportsPage() {
   const [locationId, setLocationId] = useState<string | undefined>(undefined)
   const activeLocationId = locationId ?? locations[0]?.id
 
+  const [periodStart, setPeriodStart] = useState(startOfMonthIso)
+  const [periodEnd, setPeriodEnd] = useState(todayIso)
+
   const { data: recipeReport = [] } = useRecipeCostingReport(orgId)
   const { data: ingredientReport = [] } = useIngredientCostReport(orgId)
   const { data: inventoryReport = [] } = useInventoryValuationReport(orgId, activeLocationId)
+  const { data: cogsReport = [] } = useCogsReport(orgId, activeLocationId, periodStart, periodEnd)
 
   if (!currentOrg) return null
 
@@ -157,6 +168,28 @@ export function ReportsPage() {
     formatCurrency(i.value, baseCurrency),
   ])
   const inventoryTotalValue = inventoryReport.reduce((sum, i) => sum + i.value, 0)
+
+  const cogsColumns = [
+    'Name',
+    'Base unit',
+    'Beginning qty',
+    'Beginning value',
+    'Purchases qty',
+    'Purchases value',
+    'Ending qty',
+    'Ending value',
+  ]
+  const cogsRows = cogsReport.map((c) => [
+    c.name,
+    c.baseUnit,
+    c.beginningQty,
+    formatCurrency(c.beginningValue, baseCurrency),
+    c.purchasesQty,
+    formatCurrency(c.purchasesValue, baseCurrency),
+    c.endingQty,
+    formatCurrency(c.endingValue, baseCurrency),
+  ])
+  const totalCogs = cogsReport.reduce((sum, c) => sum + c.cogs, 0)
 
   return (
     <div className="flex flex-col gap-6">
@@ -210,6 +243,62 @@ export function ReportsPage() {
             </SelectContent>
           </Select>
         )}
+      </ReportCard>
+
+      <ReportCard
+        title="Cost of Goods Sold"
+        description={`Beginning + Purchases − Ending, valued at current ingredient cost (not historical) — total COGS ${formatCurrency(totalCogs, baseCurrency)}`}
+        count={cogsReport.length}
+        columns={cogsColumns}
+        rows={cogsRows}
+        filenameBase="cost-of-goods-sold"
+        pdfTitle="Cost of Goods Sold"
+      >
+        <div className="flex items-end gap-2">
+          {locations.length > 1 && (
+            <Select value={activeLocationId} onValueChange={(v) => v && setLocationId(v)}>
+              <SelectTrigger className="w-36">
+                <SelectValue>
+                  {(id: string | null) => locations.find((l) => l.id === id)?.name ?? 'Location'}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {locations.map((loc) => (
+                  <SelectItem key={loc.id} value={loc.id}>
+                    {loc.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="cogs-start" className="text-xs">
+              From
+            </Label>
+            <Input
+              id="cogs-start"
+              type="date"
+              value={periodStart}
+              max={periodEnd}
+              onChange={(e) => setPeriodStart(e.target.value)}
+              className="w-36"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="cogs-end" className="text-xs">
+              To
+            </Label>
+            <Input
+              id="cogs-end"
+              type="date"
+              value={periodEnd}
+              min={periodStart}
+              max={todayIso}
+              onChange={(e) => setPeriodEnd(e.target.value)}
+              className="w-36"
+            />
+          </div>
+        </div>
       </ReportCard>
     </div>
   )
