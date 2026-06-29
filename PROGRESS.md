@@ -103,6 +103,16 @@
   the form now allows negative quantities for that type only, with a hint explaining the sign
   convention, and rejects zero. Verified live: corrected the actual corrupted stock value back to
   the owner's real on-hand count via a signed adjustment, confirmed in the database.
+
+  Follow-up from the same walkthrough: the owner still had to do the subtraction themselves to use
+  "Adjustment" correctly for a physical count (count vs. system value). Added a "Physical count"
+  entry mode — type what you actually counted, the form computes and logs the right signed
+  adjustment for you (a UI convenience over the same `adjustment` change_type, not a new one;
+  matching counts are a no-op, nothing gets logged). Relabeled the type dropdown for clearer
+  accounting language: Purchases (restock) / Used / Wastage-spoilage / Adjustment (known amount) /
+  Physical count (ending inventory). Verified live: seeded 5000ml, entered a physical count of
+  3200ml, confirmed the log shows a computed `adjustment -1800` and stock reads 3200; re-entering
+  the same count a second time correctly added no new log row.
 - [x] Supplier Price History (timestamped, chart, spike flagging) — the `price_history` table and
       its `on_ingredient_cost_change` trigger already existed from the foundation migrations
       (auto-recorded on every `purchase_unit_cost` edit); added the missing frontend: a "History"
