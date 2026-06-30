@@ -177,6 +177,21 @@
 
 - [x] Plan tiers (Free / Pro / Enterprise) + feature gating (plan limits already enforced
       server-side via triggers from the foundation migrations)
+- [x] **Restructured to Free / Starter / Growth / Pro** (per finalized pricing package): Free
+      ₱0 (5 recipes, 20 ingredients, 1 location, 1 member), Starter ₱599 (unlimited recipes/
+      ingredients, 1 location, 3 members), Growth ₱1,499 (unlimited everything, 10 members),
+      Pro — not yet released (`is_active=false`, hidden from the customer-facing upgrade flow via
+      `usePlans()`'s existing filter, but assignable by an admin). Added a `max_recipes` plan-limit
+      column + `check_recipe_limit()` trigger mirroring the existing ingredients/locations/members
+      pattern. The one real existing subscriber (on the old ₱1,500 Pro) was reclassified to Growth
+      (closest match by price/position) before 'pro' was redefined to mean the new tier — their
+      payment history amounts were left untouched, only the plan classification moved. Also fixed
+      a real pre-existing bug found while verifying: `enforce_plan_limit()`'s error message used
+      `%s` in a PL/pgSQL `RAISE`, where the placeholder is a bare `%` — "%s" rendered as the
+      substituted value plus a literal trailing "s" (e.g. "max_recipess (max 5s)"), affecting every
+      plan-limit error, not just the new recipes one. Verified live end-to-end: DB-level limit
+      enforcement (6th recipe blocked with a correctly-worded error on Free), and the Upgrade
+      dialog showing only Starter/Growth as selectable with Pro correctly hidden.
 - [x] **Manual billing (no Stripe, per user request)** — GCash / bank transfer instead of card
       payments: tenant Settings → Billing shows current plan/status/renewal/usage, an "Upgrade
       plan" flow displays the platform's configured payment methods (GCash number + account name

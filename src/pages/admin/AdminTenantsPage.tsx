@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select'
 
 const STATUS_OPTIONS = ['all', 'trialing', 'active', 'past_due', 'suspended', 'canceled']
-const PLAN_OPTIONS = ['all', 'free', 'pro', 'enterprise']
+const PLAN_OPTIONS = ['all', 'free', 'starter', 'growth', 'pro']
 
 export function AdminTenantsPage() {
   const [search, setSearch] = useState('')

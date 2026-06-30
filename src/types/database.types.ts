@@ -707,6 +707,7 @@ export type Database = {
           max_ingredients: number | null
           max_locations: number | null
           max_members: number | null
+          max_recipes: number | null
           name: string
           price_monthly_php: number
           price_monthly_usd: number
@@ -720,6 +721,7 @@ export type Database = {
           max_ingredients?: number | null
           max_locations?: number | null
           max_members?: number | null
+          max_recipes?: number | null
           name: string
           price_monthly_php?: number
           price_monthly_usd?: number
@@ -733,6 +735,7 @@ export type Database = {
           max_ingredients?: number | null
           max_locations?: number | null
           max_members?: number | null
+          max_recipes?: number | null
           name?: string
           price_monthly_php?: number
           price_monthly_usd?: number

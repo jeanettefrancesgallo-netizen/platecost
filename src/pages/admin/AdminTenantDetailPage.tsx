@@ -112,8 +112,9 @@ export function AdminTenantDetailPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="free">Free</SelectItem>
-                <SelectItem value="pro">Pro</SelectItem>
-                <SelectItem value="enterprise">Enterprise</SelectItem>
+                <SelectItem value="starter">Starter</SelectItem>
+                <SelectItem value="growth">Growth</SelectItem>
+                <SelectItem value="pro">Pro (not yet released)</SelectItem>
               </SelectContent>
             </Select>
           </CardContent>
